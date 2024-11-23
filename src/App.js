@@ -2,6 +2,7 @@ import styled, { keyframes } from "styled-components";
 
 const Wrapper = styled.div`
   display: flex;
+  background-color: ${(props) => props.theme.backgroundColor};
 `;
 
 const rotateAnimation = keyframes`
@@ -18,7 +19,7 @@ const Emoji = styled.span`
 `;
 
 const Box = styled.div`
-  background-color: tomato;
+  background-color: ${(props) => props.theme.boxColor};
   width: 200px;
   height: 200px;
   animation: ${rotateAnimation} 1s linear infinite;
