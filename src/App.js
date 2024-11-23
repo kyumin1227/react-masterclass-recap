@@ -13,6 +13,10 @@ const rotateAnimation = keyframes`
   }
 `;
 
+const Emoji = styled.span`
+  font-size: 46px;
+`;
+
 const Box = styled.div`
   background-color: tomato;
   width: 200px;
@@ -30,6 +34,11 @@ const Box = styled.div`
       opacity: 0;
     }
   }
+  ${Emoji} {
+    &:active {
+      font-size: 100px;
+    }
+  }
 `;
 
 function App() {
@@ -37,6 +46,7 @@ function App() {
     <Wrapper>
       <Box>
         <span>🐈</span>
+        <Emoji>🔥</Emoji>
       </Box>
     </Wrapper>
   );
