@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import { Outlet, Route, Routes, useLocation, useParams } from "react-router-dom";
+import { Link, Outlet, useLocation, useMatch, useParams } from "react-router-dom";
 import styled from "styled-components";
-import Chart from "./Chart";
-import Price from "./Price";
 
 interface InfoData {
   id: string;
@@ -65,6 +63,8 @@ const Coin = () => {
   const { state } = useLocation() as { state: { name: string } };
   const [info, setInfo] = useState<InfoData | undefined>();
   const [price, setPrice] = useState<PriceData | undefined>();
+  const priceMatch = useMatch("/:coinId/price");
+  const chartMatch = useMatch("/:coinId/chart");
 
   useEffect(() => {
     (async () => {
@@ -111,6 +111,14 @@ const Coin = () => {
                 <span>{price?.max_supply}</span>
               </OverviewItem>
             </Overview>
+            <Tabs>
+              <Tab $isActive={chartMatch !== null}>
+                <Link to="chart">Chart</Link>
+              </Tab>
+              <Tab $isActive={priceMatch !== null}>
+                <Link to="price">Price</Link>
+              </Tab>
+            </Tabs>
           </>
         )}
         <Outlet />
@@ -165,6 +173,28 @@ const OverviewItem = styled.div`
 
 const Description = styled.p`
   margin: 20px 0px;
+`;
+
+const Tabs = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  margin: 25px 0px;
+  gap: 10px;
+`;
+
+// $접두사를 이용하면 props가 DOM으로 전달되지 않고 필터링
+const Tab = styled.span<{ $isActive: boolean }>`
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 400;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 7px 0px;
+  border-radius: 10px;
+  color: ${(props) => (props.$isActive ? props.theme.accentColor : props.theme.textColor)};
+  a {
+    display: block;
+  }
 `;
 
 export default Coin;
