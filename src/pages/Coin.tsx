@@ -163,7 +163,7 @@ const OverviewItem = styled.div`
   flex-direction: column;
   align-items: center;
 
-  span: first-child {
+  span:first-child {
     font-size: 10px;
     font-weight: 400;
     text-transform: uppercase;
