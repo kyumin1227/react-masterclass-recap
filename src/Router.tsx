@@ -5,17 +5,19 @@ import Coin from "./pages/Coin";
 import Chart from "./pages/Chart";
 import Price from "./pages/Price";
 
+const base = import.meta.env.BASE_URL;
+
 const Router = createBrowserRouter([
   {
-    path: "/",
+    path: `${base}`,
     element: <App />,
     children: [
       {
-        path: "/",
+        path: `${base}`,
         element: <Coins />,
       },
       {
-        path: "/:coinId",
+        path: `${base}/:coinId`,
         element: <Coin />,
         children: [
           {

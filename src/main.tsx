@@ -10,11 +10,11 @@ const queryClient = new QueryClient();
 
 const ThemeContext = createContext<{ toggleTheme: () => void; isDarkMode: boolean }>({
   toggleTheme: () => {},
-  isDarkMode: false,
+  isDarkMode: true,
 });
 
 export const CustomThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
   const toggleTheme = () => {
     setIsDarkMode((prev) => !prev);

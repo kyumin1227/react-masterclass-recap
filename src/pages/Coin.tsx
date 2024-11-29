@@ -65,6 +65,7 @@ const Coin = () => {
   const { state } = useLocation() as { state: { name: string } };
   const priceMatch = useMatch("/:coinId/price");
   const chartMatch = useMatch("/:coinId/chart");
+  const base = import.meta.env.BASE_URL;
 
   const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(["info", coinId], () => fetchCoinInfo(coinId));
   const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(
@@ -83,11 +84,11 @@ const Coin = () => {
     <>
       <Container>
         <Helmet>
-          <title>{state ? state.name : loading ? "Loading..." : infoData?.name}</title>
+          <title>{state ? state?.name : loading ? "Loading..." : infoData?.name}</title>
         </Helmet>
         <Header>
           <Home>
-            <Link to={"/"}>Home</Link>
+            <Link to={base}>Home</Link>
           </Home>
           <Title>{state ? state.name : loading ? "Loading..." : infoData?.name}</Title>
           <ChangeDisplayMode onClick={toggleTheme}>{isDarkMode ? "Light" : "Dark"}</ChangeDisplayMode>

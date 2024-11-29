@@ -16,6 +16,7 @@ interface ICoin {
 
 const Coins = () => {
   const { isLoading, data } = useQuery<ICoin[]>("allCoins", fetchCoins);
+  const base = import.meta.env.BASE_URL;
 
   return (
     <Container>
@@ -31,8 +32,8 @@ const Coins = () => {
         <CoinsList>
           {data?.slice(0, 100).map((coin) => (
             <Coin key={coin.id}>
-              <Link to={`/${coin.id}`} state={{ name: coin.name }}>
-                <Img src={`./node_modules/cryptocurrency-icons/svg/color/${coin.symbol.toLowerCase()}.svg`} />
+              <Link to={`${base}${coin.id}`} state={{ name: coin.name }}>
+                <Img src={`${base}color/${coin.symbol.toLowerCase()}.svg`} />
                 {coin.name} &rarr;{" "}
               </Link>
             </Coin>

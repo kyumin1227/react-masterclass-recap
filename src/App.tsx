@@ -1,5 +1,4 @@
 import { Outlet } from "react-router-dom";
-import "./assets/reset.css";
 import { createGlobalStyle } from "styled-components";
 import { ReactQueryDevtools } from "react-query/devtools";
 
