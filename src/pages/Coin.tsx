@@ -3,6 +3,7 @@ import { Link, Outlet, useLocation, useMatch, useParams } from "react-router-dom
 import styled from "styled-components";
 import { fetchCoinInfo, fetchCoinTickers } from "../api";
 import { Helmet } from "react-helmet";
+import { useThemeContext } from "../main";
 
 interface InfoData {
   id: string;
@@ -74,7 +75,9 @@ const Coin = () => {
     // }
   );
 
-  const loading = infoLoading || tickersLoading;
+  const loading = infoLoading && tickersLoading;
+
+  const { toggleTheme, isDarkMode } = useThemeContext();
 
   return (
     <>
@@ -83,7 +86,11 @@ const Coin = () => {
           <title>{state ? state.name : loading ? "Loading..." : infoData?.name}</title>
         </Helmet>
         <Header>
+          <Home>
+            <Link to={"/"}>Home</Link>
+          </Home>
           <Title>{state ? state.name : loading ? "Loading..." : infoData?.name}</Title>
+          <ChangeDisplayMode onClick={toggleTheme}>{isDarkMode ? "Light" : "Dark"}</ChangeDisplayMode>
         </Header>
         {loading ? (
           <Loader>Loading...</Loader>
@@ -116,12 +123,14 @@ const Coin = () => {
             </Overview>
             <Tabs>
               <Tab $isActive={chartMatch !== null}>
-                <Link to="chart" state={{ coinId }}>
+                <Link to="chart" state={{ coinId, name: state.name }}>
                   Chart
                 </Link>
               </Tab>
               <Tab $isActive={priceMatch !== null}>
-                <Link to="price">Price</Link>
+                <Link to="price" state={{ coinId, name: state.name }}>
+                  Price
+                </Link>
               </Tab>
             </Tabs>
           </>
@@ -146,7 +155,7 @@ const Container = styled.div`
 const Header = styled.header`
   height: 10vh;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
 `;
 
@@ -201,5 +210,9 @@ const Tab = styled.span<{ $isActive: boolean }>`
     display: block;
   }
 `;
+
+const Home = styled.div``;
+
+const ChangeDisplayMode = styled.div``;
 
 export default Coin;

@@ -32,20 +32,27 @@ function formatTimestamp(timestamp: number): string {
 
 const Chart = () => {
   const { state } = useLocation() as { state: { coinId: string } };
-  const { isLoading, data } = useQuery<ICoinHistory[]>(["ohlcv", state.coinId], () => fetchCoinHistory(state.coinId), {
-    refetchInterval: 10000,
-  });
+  const { isLoading, data } = useQuery<ICoinHistory[]>(
+    ["ohlcv", state.coinId],
+    () => fetchCoinHistory(state.coinId)
+    // {
+    // refetchInterval: 10000,
+    // }
+  );
   return (
     <div>
       {isLoading ? (
         "isLoading..."
       ) : (
         <ReactApexChart
-          type="line"
+          type="candlestick"
           series={[
             {
-              name: "Price",
-              data: data?.map((price) => Number(price.close)) || [],
+              data:
+                data?.map((price) => ({
+                  x: price.time_close,
+                  y: [Number(price.open), Number(price.high), Number(price.low), Number(price.close)],
+                })) || [],
             },
           ]}
           options={{
@@ -74,8 +81,8 @@ const Chart = () => {
               axisTicks: { show: false },
               axisBorder: { show: false },
               labels: { show: false },
-              // type: "datetime",
-              categories: data?.map((price) => formatTimestamp(price.time_close)),
+              type: "datetime",
+              categories: data?.map((price) => price.time_close),
             },
             fill: {
               type: "gradient",
