@@ -30,7 +30,7 @@ interface InfoData {
   last_data_at: string;
 }
 
-interface PriceData {
+export interface PriceData {
   id: string;
   name: string;
   symbol: string;
@@ -44,7 +44,7 @@ interface PriceData {
     USD: {
       price: number;
       volume_24h: number;
-      volume_change_24h: number;
+      volume_24h_change_24h: number;
       market_cap: number;
       market_cap_change_24h: number;
       percent_change_1h: number;
