@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import "./assets/reset.css";
 import { createGlobalStyle } from "styled-components";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -24,6 +25,7 @@ const App = () => {
     <>
       <GlobalStyle />
       <Outlet />
+      <ReactQueryDevtools initialIsOpen={true} />
     </>
   );
 };
