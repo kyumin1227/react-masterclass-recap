@@ -3,7 +3,8 @@ import { Link, Outlet, useLocation, useMatch, useParams } from "react-router-dom
 import styled from "styled-components";
 import { fetchCoinInfo, fetchCoinTickers } from "../api";
 import { Helmet } from "react-helmet";
-import { useThemeContext } from "../main";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { isDarkAtom } from "../atoms";
 
 interface InfoData {
   id: string;
@@ -71,6 +72,7 @@ const Coin = () => {
   const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(
     ["tickers", coinId],
     () => fetchCoinTickers(coinId)
+    // // api 호출 횟수 제한으로 인해 주석 처리
     // {
     //   refetchInterval: 5000,
     // }
@@ -78,7 +80,9 @@ const Coin = () => {
 
   const loading = infoLoading && tickersLoading;
 
-  const { toggleTheme, isDarkMode } = useThemeContext();
+  const isDarkMode = useRecoilValue(isDarkAtom);
+  const setDarkAtom = useSetRecoilState(isDarkAtom);
+  const handleDarkAtom = () => setDarkAtom((prev) => !prev);
 
   return (
     <>
@@ -91,7 +95,7 @@ const Coin = () => {
             <Link to={base}>Home</Link>
           </Home>
           <Title>{state ? state.name : loading ? "Loading..." : infoData?.name}</Title>
-          <ChangeDisplayMode onClick={toggleTheme}>{isDarkMode ? "Light" : "Dark"}</ChangeDisplayMode>
+          <ChangeDisplayMode onClick={handleDarkAtom}>{isDarkMode ? "Light" : "Dark"}</ChangeDisplayMode>
         </Header>
         {loading ? (
           <Loader>Loading...</Loader>
