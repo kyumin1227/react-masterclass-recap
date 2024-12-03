@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
-import ToDoList from "./pages/ToDoList";
+import ToDoList from "./components/ToDoList";
 
 const base = import.meta.env.BASE_URL;
 
