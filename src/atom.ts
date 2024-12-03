@@ -1,5 +1,5 @@
 import { atom, selector } from "recoil";
-import { IToDo } from "./types";
+import { Categories, IToDo } from "./types";
 
 export const toDoState = atom<IToDo[]>({
   key: "toDo",
@@ -8,7 +8,7 @@ export const toDoState = atom<IToDo[]>({
 
 export const categoryState = atom<IToDo["category"]>({
   key: "category",
-  default: "TO_DO",
+  default: Categories.TO_DO,
 });
 
 export const toDoSelector = selector({
