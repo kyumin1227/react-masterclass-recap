@@ -12,7 +12,11 @@ const CreateToDo = () => {
   const category = useRecoilValue(categoryState);
 
   const onValid = ({ toDo }: IForm) => {
-    setToDos((prev) => [...prev, { text: toDo, category: category, id: Date.now() }]);
+    setToDos((prev) => {
+      const newToDos = [...prev, { text: toDo, category: category, id: Date.now() }];
+      localStorage.setItem("toDos", JSON.stringify(newToDos));
+      return newToDos;
+    });
     setValue("toDo", "");
   };
 

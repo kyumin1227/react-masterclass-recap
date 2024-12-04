@@ -3,12 +3,17 @@ import { Categories, IToDo } from "./types";
 
 export const toDoState = atom<IToDo[]>({
   key: "toDo",
-  default: [],
+  default: JSON.parse(localStorage.getItem("toDos") || "[]") as IToDo[],
 });
 
 export const categoryState = atom<IToDo["category"]>({
   key: "category",
-  default: Categories.TO_DO,
+  default: "TO_DO",
+});
+
+export const categoryListState = atom<Object>({
+  key: "categoryList",
+  default: JSON.parse(localStorage.getItem("categoryList") || JSON.stringify(Categories)),
 });
 
 export const toDoSelector = selector({

@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 import { ReactQueryDevtools } from "react-query/devtools";
-import { darkTheme, lightTheme } from "./theme";
+import { darkTheme } from "./theme";
 
 const GlobalStyle = createGlobalStyle`
   body {
