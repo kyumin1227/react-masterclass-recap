@@ -1,14 +1,15 @@
 import styled from "styled-components";
 import { motion } from "framer-motion";
 
+const myVars = {
+  start: { scale: 0 },
+  end: { scale: 1, rotateZ: 360, transition: { type: "spring", mass: 1.3, delay: 0.5 } },
+};
+
 const index = () => {
   return (
     <Wrapper>
-      <Box
-        transition={{ type: "spring", mass: 1.3, delay: 0.5 }}
-        initial={{ scale: 0 }}
-        animate={{ scale: 1, rotateZ: 360 }}
-      />
+      <Box variants={myVars} initial="start" animate="end" />
     </Wrapper>
   );
 };
