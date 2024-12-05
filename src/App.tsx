@@ -6,8 +6,8 @@ import { darkTheme } from "./theme";
 const GlobalStyle = createGlobalStyle`
   body {
     font-family: "Noto Sans", serif;
-    background-color: ${(props) => props.theme.bgColor};
-    color: ${(props) => props.theme.textColor};
+    color: black;
+    background: linear-gradient(135deg, #e09, #d0e);
   }
 
   * {

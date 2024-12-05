@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
-import ToDoList from "./components/ToDoList";
+import Index from "./pages/Index";
 
 const base = import.meta.env.BASE_URL;
 
@@ -11,7 +11,7 @@ const Router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <ToDoList />,
+        element: <Index />,
       },
     ],
   },
