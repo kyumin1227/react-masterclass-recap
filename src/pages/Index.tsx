@@ -4,27 +4,56 @@ import { useState } from "react";
 
 const index = () => {
   const [clicked, setClicked] = useState(false);
-  const toggleClicked = () => setClicked((prev) => !prev);
+  const toggle = () => setClicked((prev) => !prev);
+
+  const [boxId, setBoxId] = useState<number | null>(null);
 
   return (
-    <Wrapper onClick={toggleClicked}>
+    <Wrapper onClick={toggle}>
       <AnimatePresence>
-        <Box key={1}>{!clicked ? <Circle layoutId="circle" style={{ borderRadius: 50 }} /> : null}</Box>
-        <Box key={2}>{clicked ? <Circle layoutId="circle" style={{ borderRadius: 10, scale: 2 }} /> : null}</Box>
+        <Grid>
+          {[0, 1, 2, 3].map((id) => (
+            <Box key={id} onClick={() => setBoxId(id)} layoutId={id + ""} />
+          ))}
+        </Grid>
+        {clicked ? (
+          <Overlay
+            onClick={() => setBoxId(null)}
+            initial={{ backgroundColor: "rgba(0, 0, 0, 0)" }}
+            animate={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+            exit={{ backgroundColor: "rgba(0, 0, 0, 0)" }}
+          >
+            <Box layoutId={`${boxId}`} style={{ width: 400, height: 200 }} />
+          </Overlay>
+        ) : null}
       </AnimatePresence>
     </Wrapper>
   );
 };
 
-const Circle = styled(motion.div)`
-  background-color: #00a5ff;
-  height: 100px;
-  width: 100px;
+const Overlay = styled(motion.div)`
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Grid = styled.div`
+  width: 50vw;
+  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  div:first-child,
+  div:last-child {
+    grid-column: span 2;
+  }
 `;
 
 const Box = styled(motion.div)`
-  width: 400px;
-  height: 400px;
+  height: 200px;
   display: flex;
   justify-content: center;
   align-items: center;
