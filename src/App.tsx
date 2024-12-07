@@ -2,12 +2,12 @@ import { Outlet } from "react-router-dom";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { darkTheme } from "./theme";
+import Header from "./components/Header";
 
 const GlobalStyle = createGlobalStyle`
   body {
     font-family: "Noto Sans", serif;
     color: black;
-    background: linear-gradient(135deg, #e09, #d0e);
   }
 
   * {
@@ -25,6 +25,7 @@ const App = () => {
     <>
       <ThemeProvider theme={darkTheme}>
         <GlobalStyle />
+        <Header />
         <Outlet />
         <ReactQueryDevtools initialIsOpen={true} />
       </ThemeProvider>

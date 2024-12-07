@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
-import Index from "./pages/Index";
+import Home from "./pages/Home";
+import Tv from "./pages/Tv";
 
 const base = import.meta.env.BASE_URL;
 
@@ -11,7 +12,11 @@ const Router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <Index />,
+        element: <Home />,
+      },
+      {
+        path: "tv",
+        element: <Tv />,
       },
     ],
   },
