@@ -8,6 +8,7 @@ const GlobalStyle = createGlobalStyle`
   body {
     font-family: "Noto Sans", serif;
     color: black;
+    background-color: ${(props) => props.theme.black};
   }
 
   * {
