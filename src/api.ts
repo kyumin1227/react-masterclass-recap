@@ -61,3 +61,7 @@ export function getTopTv() {
 export function getDetail(type: string, id: string) {
   return fetch(`${BASE_PATH}/${type}/${id}?api_key=${API_KEY}`).then((res) => res.json());
 }
+
+export function getSearch(keyword: string) {
+  return fetch(`${BASE_PATH}/search/multi?query=${keyword}&api_key=${API_KEY}`).then((res) => res.json());
+}
