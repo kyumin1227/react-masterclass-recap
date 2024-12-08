@@ -1,25 +1,10 @@
 import { useQuery } from "react-query";
-import { getMovie, IGetMoviesResult } from "../api";
+import { getNowMovie, getPopularMovie, getTopMovie, getUpcomingMovie, IGetMoviesResult } from "../api";
 import styled from "styled-components";
 import { makeImagePath } from "../utils";
 import { motion, AnimatePresence, useScroll } from "motion/react";
-import React, { useState } from "react";
 import { useMatch, useNavigate } from "react-router-dom";
-
-const rowVariants = {
-  hidden: { x: window.outerWidth + 5 },
-  visible: { x: 0 },
-  exit: { x: -window.outerWidth - 5 },
-};
-
-const boxVariants = {
-  normal: { scale: 1 },
-  hover: { scale: 1.3, y: -50, transition: { delay: 0.3 } },
-};
-
-const infoVariants = {
-  hover: { opacity: 1, transition: { delay: 0.3 } },
-};
+import Slider from "../components/Slider";
 
 const base = import.meta.env.BASE_URL;
 
@@ -28,79 +13,31 @@ const Home = () => {
   const scroll = useScroll();
   console.log(movieMatch);
   const navigate = useNavigate();
-  const { data, isLoading } = useQuery<IGetMoviesResult>(["movies", "nowPlaying"], getMovie);
-  console.log(data);
-  console.log(isLoading);
-  const [index, setIndex] = useState(0);
-  const [leaving, setLeaving] = useState(false);
-
-  const offset = 6;
-
-  const handelBox = () => {
-    if (data) {
-      if (leaving) return;
-      handleLeaving();
-      const totalMovies = data?.results.length - 1;
-      const maxIndex = Math.floor(totalMovies / offset) - 1;
-      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
-    }
-  };
-
-  const handleLeaving = () => {
-    setLeaving((prev) => !prev);
-  };
-
-  const onBoxClick = (e: React.MouseEvent<HTMLDivElement>, movieId: number) => {
-    e.stopPropagation();
-    navigate(`${base}movie/${movieId}`);
-  };
+  const { data: nowMovieData, isLoading: nowMovieIsLoading } = useQuery<IGetMoviesResult>(
+    ["movies", "nowPlaying"],
+    getNowMovie
+  );
+  console.log(nowMovieData);
 
   const clickedMovie =
-    movieMatch?.params.movieId && data?.results.find((movie) => movie.id + "" === movieMatch.params.movieId);
+    movieMatch?.params.movieId && nowMovieData?.results.find((movie) => movie.id + "" === movieMatch.params.movieId);
 
   console.log(clickedMovie);
 
   return (
-    <Wrapper onClick={handelBox}>
-      {isLoading ? (
+    <Wrapper>
+      {nowMovieIsLoading ? (
         <Loader>Loading...</Loader>
       ) : (
         <>
-          <Banner bgPhoto={makeImagePath(data?.results[0].backdrop_path || "")}>
-            <Title>{data?.results[0].title}</Title>
-            <Overview>{data?.results[0].overview}</Overview>
+          <Banner $bgPhoto={makeImagePath(nowMovieData?.results[0].backdrop_path || "")}>
+            <Title>{nowMovieData?.results[0].title}</Title>
+            <Overview>{nowMovieData?.results[0].overview}</Overview>
           </Banner>
-          <Slider>
-            <AnimatePresence initial={false} onExitComplete={handleLeaving}>
-              <Row
-                key={index}
-                variants={rowVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                transition={{ type: "tween", duration: 1 }}
-              >
-                {data?.results
-                  .slice(1)
-                  .slice(index * offset, index * offset + offset)
-                  .map((movie) => (
-                    <Box
-                      layoutId={movie.id + ""}
-                      key={movie.id}
-                      bgPhoto={makeImagePath(movie.poster_path, "w300")}
-                      variants={boxVariants}
-                      initial="normal"
-                      whileHover="hover"
-                      onClick={(e) => onBoxClick(e, movie.id)}
-                    >
-                      <Info variants={infoVariants}>
-                        <h4>{movie.title}</h4>
-                      </Info>
-                    </Box>
-                  ))}
-              </Row>
-            </AnimatePresence>
-          </Slider>
+          <Slider getDataApi={getNowMovie} dataName="Now Playing" />
+          <Slider getDataApi={getPopularMovie} dataName="Popular" />
+          <Slider getDataApi={getTopMovie} dataName="Top Rated" />
+          <Slider getDataApi={getUpcomingMovie} dataName="Upcoming" />
           <AnimatePresence>
             {movieMatch && (
               <>
@@ -143,14 +80,14 @@ const Wrapper = styled.div`
 
 const Loader = styled.div``;
 
-const Banner = styled.div<{ bgPhoto: string }>`
-  height: 100vh;
+const Banner = styled.div<{ $bgPhoto: string }>`
+  height: 80vh;
   background-color: ${(props) => props.theme.red};
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding: 60px;
-  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)), url(${(props) => props.bgPhoto});
+  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)), url(${(props) => props.$bgPhoto});
   background-size: cover;
 `;
 
@@ -165,48 +102,6 @@ const Overview = styled.p`
   width: 50%;
   color: ${(props) => props.theme.white};
   line-height: 1.3;
-`;
-
-const Slider = styled.div`
-  position: relative;
-  top: -100px;
-`;
-
-const Row = styled(motion.div)`
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 5px;
-  position: absolute;
-  width: 100%;
-`;
-
-const Box = styled(motion.div)<{ bgPhoto: string }>`
-  background-color: ${(props) => props.theme.white};
-  background-image: url(${(props) => props.bgPhoto});
-  background-size: cover;
-  height: 200px;
-  font-size: 20px;
-  cursor: pointer;
-  &:first-child {
-    transform-origin: center left;
-  }
-  &:last-child {
-    transform-origin: center right;
-  }
-`;
-
-const Info = styled(motion.div)`
-  padding: 10px;
-  background-color: ${(props) => props.theme.black};
-  opacity: 0;
-  position: absolute;
-  width: 100%;
-  bottom: 0;
-  color: ${(props) => props.theme.white};
-  h4 {
-    text-align: center;
-    font-size: 18px;
-  }
 `;
 
 const BigMovieInfo = styled(motion.div)`

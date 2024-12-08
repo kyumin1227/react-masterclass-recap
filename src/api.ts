@@ -20,6 +20,18 @@ export interface IGetMoviesResult {
   results: IMovie[];
 }
 
-export function getMovie() {
+export function getNowMovie(): Promise<IGetMoviesResult> {
   return fetch(`${BASE_PATH}/movie/now_playing?api_key=${API_KEY}`).then((res) => res.json());
+}
+
+export function getPopularMovie() {
+  return fetch(`${BASE_PATH}/movie/popular?api_key=${API_KEY}`).then((res) => res.json());
+}
+
+export function getTopMovie() {
+  return fetch(`${BASE_PATH}/movie/top_rated?api_key=${API_KEY}`).then((res) => res.json());
+}
+
+export function getUpcomingMovie() {
+  return fetch(`${BASE_PATH}/movie/upcoming?api_key=${API_KEY}`).then((res) => res.json());
 }
