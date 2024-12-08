@@ -24,7 +24,7 @@ const Home = () => {
   const navigate = useNavigate();
   const clickBox = useRecoilValue(clickBoxState);
   const { data: nowMovieData, isLoading: nowMovieIsLoading } = useQuery<IGetMoviesResult>(
-    ["movies", "Now Playing"],
+    ["movies", "Latest Movies"],
     getNowMovie
   );
 
@@ -46,10 +46,10 @@ const Home = () => {
             <Title>{nowMovieData?.results[0].title}</Title>
             <Overview>{nowMovieData?.results[0].overview}</Overview>
           </Banner>
-          <Slider getDataApi={getNowMovie} dataName="Now Playing" />
-          <Slider getDataApi={getPopularMovie} dataName="Popular" />
-          <Slider getDataApi={getTopMovie} dataName="Top Rated" />
-          <Slider getDataApi={getUpcomingMovie} dataName="Upcoming" />
+          <Slider getDataApi={getNowMovie} dataName="Latest Movies" type="movie" />
+          <Slider getDataApi={getPopularMovie} dataName="Popular" type="movie" />
+          <Slider getDataApi={getTopMovie} dataName="Top Rated" type="movie" />
+          <Slider getDataApi={getUpcomingMovie} dataName="Upcoming" type="movie" />
           <AnimatePresence>
             {movieMatch && (
               <>

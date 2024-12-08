@@ -20,13 +20,14 @@ const infoVariants = {
 interface SliderProps {
   getDataApi: () => Promise<IGetMoviesResult>;
   dataName: string;
+  type: "movie" | "tv";
 }
 
-const Slider = ({ getDataApi, dataName }: SliderProps) => {
+const Slider = ({ getDataApi, dataName, type }: SliderProps) => {
   const navigate = useNavigate();
   const setClickBoxState = useSetRecoilState(clickBoxState);
 
-  const { data, isLoading } = useQuery<IGetMoviesResult>(["movies", `${dataName}`], getDataApi);
+  const { data, isLoading } = useQuery<IGetMoviesResult>([`${type}`, `${dataName}`], getDataApi);
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const [isNext, setIsNext] = useState(true);
@@ -46,7 +47,7 @@ const Slider = ({ getDataApi, dataName }: SliderProps) => {
 
   const onBoxClick = (e: React.MouseEvent<HTMLDivElement>, movieId: number) => {
     e.stopPropagation();
-    navigate(`movie/${movieId}`);
+    navigate(`${type === "movie" ? "movie/" : ""}${movieId}`);
     setClickBoxState(movieId + " " + dataName);
   };
 
@@ -101,7 +102,7 @@ const Slider = ({ getDataApi, dataName }: SliderProps) => {
                   onClick={(e) => onBoxClick(e, movie.id)}
                 >
                   <Info variants={infoVariants}>
-                    <h4>{movie.title}</h4>
+                    <h4>{type === "movie" ? movie.title : movie.name}</h4>
                   </Info>
                 </Box>
               ))}
