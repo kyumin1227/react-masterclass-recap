@@ -20,6 +20,10 @@ export interface IGetMoviesResult {
   results: IMovie[];
 }
 
+export interface IGetDetail extends IMovie {
+  release_date: string;
+}
+
 export function getNowMovie(): Promise<IGetMoviesResult> {
   return fetch(`${BASE_PATH}/movie/now_playing?api_key=${API_KEY}`).then((res) => res.json());
 }
@@ -34,4 +38,8 @@ export function getTopMovie() {
 
 export function getUpcomingMovie() {
   return fetch(`${BASE_PATH}/movie/upcoming?api_key=${API_KEY}`).then((res) => res.json());
+}
+
+export function getDetail(type: string, id: string) {
+  return fetch(`${BASE_PATH}/${type}/${id}?api_key=${API_KEY}`).then((res) => res.json());
 }

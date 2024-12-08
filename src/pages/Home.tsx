@@ -1,26 +1,38 @@
 import { useQuery } from "react-query";
-import { getNowMovie, getPopularMovie, getTopMovie, getUpcomingMovie, IGetMoviesResult } from "../api";
+import {
+  getDetail,
+  getNowMovie,
+  getPopularMovie,
+  getTopMovie,
+  getUpcomingMovie,
+  IGetDetail,
+  IGetMoviesResult,
+} from "../api";
 import styled from "styled-components";
 import { makeImagePath } from "../utils";
 import { motion, AnimatePresence, useScroll } from "motion/react";
 import { useMatch, useNavigate } from "react-router-dom";
 import Slider from "../components/Slider";
+import { useRecoilValue } from "recoil";
+import { clickBoxState } from "../atom";
 
 const base = import.meta.env.BASE_URL;
 
 const Home = () => {
   const movieMatch = useMatch(`${base}movie/:movieId`);
   const scroll = useScroll();
-  console.log(movieMatch);
   const navigate = useNavigate();
+  const clickBox = useRecoilValue(clickBoxState);
   const { data: nowMovieData, isLoading: nowMovieIsLoading } = useQuery<IGetMoviesResult>(
-    ["movies", "nowPlaying"],
+    ["movies", "Now Playing"],
     getNowMovie
   );
-  console.log(nowMovieData);
 
-  const clickedMovie =
-    movieMatch?.params.movieId && nowMovieData?.results.find((movie) => movie.id + "" === movieMatch.params.movieId);
+  const clickedMovie = useQuery<IGetDetail>(
+    ["movies", `${movieMatch?.params.movieId || ""}`],
+    () => getDetail("movie", movieMatch?.params.movieId + "" || ""),
+    { enabled: !!movieMatch }
+  );
 
   console.log(clickedMovie);
 
@@ -49,19 +61,20 @@ const Home = () => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                 ></Overlay>
-                <BigMovieInfo layoutId={movieMatch.params.movieId} style={{ top: scroll.scrollY.get() + 100 }}>
+                <BigMovieInfo layoutId={clickBox} style={{ top: scroll.scrollY.get() + 100 }}>
                   {clickedMovie && (
                     <>
                       <BigMovieInfoImage
                         style={{
                           backgroundImage: `linear-gradient(transparent, black), url(${makeImagePath(
-                            clickedMovie.backdrop_path + "",
+                            clickedMovie.data?.backdrop_path + "",
                             "w500"
                           )})`,
                         }}
                       />
-                      <BigMovieInfoTitle>{clickedMovie.title}</BigMovieInfoTitle>
-                      <BigMovieInfoOverview>{clickedMovie.overview}</BigMovieInfoOverview>
+                      <BigMovieInfoTitle>{clickedMovie.data?.title}</BigMovieInfoTitle>
+                      <BigMovieInfoDate>{clickedMovie.data?.release_date}</BigMovieInfoDate>
+                      <BigMovieInfoOverview>{clickedMovie.data?.overview}</BigMovieInfoOverview>
                     </>
                   )}
                 </BigMovieInfo>
@@ -138,6 +151,13 @@ const BigMovieInfoOverview = styled.p`
   color: ${(props) => props.theme.white};
   padding: 20px;
   line-height: 1.3;
+`;
+
+const BigMovieInfoDate = styled.h6`
+  color: ${(props) => props.theme.white};
+  position: relative;
+  top: -60px;
+  padding-left: 20px;
 `;
 
 const Overlay = styled(motion.div)`

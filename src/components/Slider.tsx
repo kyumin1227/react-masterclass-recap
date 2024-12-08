@@ -5,6 +5,8 @@ import { useQuery } from "react-query";
 import { IGetMoviesResult } from "../api";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
+import { clickBoxState } from "../atom";
 
 const boxVariants = {
   normal: { scale: 1 },
@@ -22,6 +24,7 @@ interface SliderProps {
 
 const Slider = ({ getDataApi, dataName }: SliderProps) => {
   const navigate = useNavigate();
+  const setClickBoxState = useSetRecoilState(clickBoxState);
 
   const { data, isLoading } = useQuery<IGetMoviesResult>(["movies", `${dataName}`], getDataApi);
   const [index, setIndex] = useState(0);
@@ -44,6 +47,7 @@ const Slider = ({ getDataApi, dataName }: SliderProps) => {
   const onBoxClick = (e: React.MouseEvent<HTMLDivElement>, movieId: number) => {
     e.stopPropagation();
     navigate(`movie/${movieId}`);
+    setClickBoxState(movieId + " " + dataName);
   };
 
   const handleButtonClick = (temp: string) => {
@@ -88,7 +92,7 @@ const Slider = ({ getDataApi, dataName }: SliderProps) => {
               .slice(index * offset, index * offset + offset)
               .map((movie) => (
                 <Box
-                  layoutId={movie.id + dataName}
+                  layoutId={movie.id + " " + dataName}
                   key={movie.id}
                   bgPhoto={makeImagePath(movie.poster_path, "w300")}
                   variants={boxVariants}
@@ -135,9 +139,9 @@ const Info = styled(motion.div)`
   padding: 10px;
   background-color: ${(props) => props.theme.black};
   opacity: 0;
-  position: absolute;
+  margin-top: 70%;
   width: 100%;
-  bottom: 0;
+  height: 30%;
   color: ${(props) => props.theme.white};
   h4 {
     text-align: center;
