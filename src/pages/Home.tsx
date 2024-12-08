@@ -2,8 +2,9 @@ import { useQuery } from "react-query";
 import { getMovie, IGetMoviesResult } from "../api";
 import styled from "styled-components";
 import { makeImagePath } from "../utils";
-import { motion, AnimatePresence } from "motion/react";
-import { useState } from "react";
+import { motion, AnimatePresence, useScroll } from "motion/react";
+import React, { useState } from "react";
+import { useMatch, useNavigate } from "react-router-dom";
 
 const rowVariants = {
   hidden: { x: window.outerWidth + 5 },
@@ -13,14 +14,20 @@ const rowVariants = {
 
 const boxVariants = {
   normal: { scale: 1 },
-  hover: { scale: 1.3, y: -100, transition: { delay: 0.3 } },
+  hover: { scale: 1.3, y: -50, transition: { delay: 0.3 } },
 };
 
 const infoVariants = {
   hover: { opacity: 1, transition: { delay: 0.3 } },
 };
 
+const base = import.meta.env.BASE_URL;
+
 const Home = () => {
+  const movieMatch = useMatch(`${base}movie/:movieId`);
+  const scroll = useScroll();
+  console.log(movieMatch);
+  const navigate = useNavigate();
   const { data, isLoading } = useQuery<IGetMoviesResult>(["movies", "nowPlaying"], getMovie);
   console.log(data);
   console.log(isLoading);
@@ -42,6 +49,16 @@ const Home = () => {
   const handleLeaving = () => {
     setLeaving((prev) => !prev);
   };
+
+  const onBoxClick = (e: React.MouseEvent<HTMLDivElement>, movieId: number) => {
+    e.stopPropagation();
+    navigate(`${base}movie/${movieId}`);
+  };
+
+  const clickedMovie =
+    movieMatch?.params.movieId && data?.results.find((movie) => movie.id + "" === movieMatch.params.movieId);
+
+  console.log(clickedMovie);
 
   return (
     <Wrapper onClick={handelBox}>
@@ -68,11 +85,13 @@ const Home = () => {
                   .slice(index * offset, index * offset + offset)
                   .map((movie) => (
                     <Box
+                      layoutId={movie.id + ""}
                       key={movie.id}
                       bgPhoto={makeImagePath(movie.poster_path, "w300")}
                       variants={boxVariants}
                       initial="normal"
                       whileHover="hover"
+                      onClick={(e) => onBoxClick(e, movie.id)}
                     >
                       <Info variants={infoVariants}>
                         <h4>{movie.title}</h4>
@@ -82,6 +101,36 @@ const Home = () => {
               </Row>
             </AnimatePresence>
           </Slider>
+          <AnimatePresence>
+            {movieMatch && (
+              <>
+                <Overlay
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`${base}`);
+                  }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                ></Overlay>
+                <BigMovieInfo layoutId={movieMatch.params.movieId} style={{ top: scroll.scrollY.get() + 100 }}>
+                  {clickedMovie && (
+                    <>
+                      <BigMovieInfoImage
+                        style={{
+                          backgroundImage: `linear-gradient(transparent, black), url(${makeImagePath(
+                            clickedMovie.backdrop_path + "",
+                            "w500"
+                          )})`,
+                        }}
+                      />
+                      <BigMovieInfoTitle>{clickedMovie.title}</BigMovieInfoTitle>
+                      <BigMovieInfoOverview>{clickedMovie.overview}</BigMovieInfoOverview>
+                    </>
+                  )}
+                </BigMovieInfo>
+              </>
+            )}
+          </AnimatePresence>
         </>
       )}
     </Wrapper>
@@ -115,6 +164,7 @@ const Overview = styled.p`
   font-size: 20px;
   width: 50%;
   color: ${(props) => props.theme.white};
+  line-height: 1.3;
 `;
 
 const Slider = styled.div`
@@ -136,6 +186,7 @@ const Box = styled(motion.div)<{ bgPhoto: string }>`
   background-size: cover;
   height: 200px;
   font-size: 20px;
+  cursor: pointer;
   &:first-child {
     transform-origin: center left;
   }
@@ -156,6 +207,52 @@ const Info = styled(motion.div)`
     text-align: center;
     font-size: 18px;
   }
+`;
+
+const BigMovieInfo = styled(motion.div)`
+  width: 40vw;
+  height: 80vh;
+  position: absolute;
+  right: 0;
+  left: 0;
+  margin: 0 auto;
+  border-radius: 15px;
+  overflow: hidden;
+  background-color: ${(props) => props.theme.black};
+`;
+
+const BigMovieInfoImage = styled.div`
+  width: 100%;
+  height: 70%;
+  background-size: cover;
+  background-position: center center;
+`;
+
+const BigMovieInfoTitle = styled.h2`
+  font-size: 24px;
+  color: ${(props) => props.theme.white};
+  position: relative;
+  top: -60px;
+  padding: 20px;
+`;
+
+const BigMovieInfoOverview = styled.p`
+  position: relative;
+  top: -60px;
+  font-size: 14px;
+  color: ${(props) => props.theme.white};
+  padding: 20px;
+  line-height: 1.3;
+`;
+
+const Overlay = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  background-color: rgba(0, 0, 0, 0.5);
 `;
 
 export default Home;
